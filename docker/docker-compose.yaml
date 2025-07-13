@@ -1,0 +1,43 @@
+services:
+  ahoum:
+    build: 
+      context: ../.
+      dockerfile: ./.docker/Dockerfile
+    volumes:
+      - ../:/ahoum
+    links:
+      - ahoum_mysql
+    depends_on:
+      - ahoum_mysql
+    ports:
+      - 0.0.0.0:8000:8000
+    container_name: ahoum
+    command: /bin/sh -c "while sleep 1000; do :; done"
+  
+  ahoum_mysql:
+    image: mysql:8
+    container_name: ahoum_mysql
+    restart: always
+    env_file:
+      - ../env/mysql.env
+    volumes:
+      - ../db/:/var/lib/mysql
+    ports:
+      - 3308:3306
+    networks:
+      - backend
+
+  ahoum_phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ahoum_phpmyadmin
+    env_file:
+      - ../env/phpmyadmin.env
+    ports:
+      - 100:80
+    links:
+      - ahoum_mysql
+    restart: always
+    depends_on:
+      - ahoum_mysql
+    networks:
+      - backend
