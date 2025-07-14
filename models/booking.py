@@ -15,7 +15,7 @@ class Booking(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
     booking_date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    status = db.Column(db.Enum(BookingStatus), default=BookingStatus.PENDING)
+    status = db.Column(db.Integer, default=BookingStatus.PENDING)
     notes = db.Column(db.Text)
     payment_status = db.Column(db.String(20), default='pending')  # For future payment integration
     payment_id = db.Column(db.String(100))  # For future payment integration
@@ -37,7 +37,7 @@ class Booking(db.Model):
             'user': self.user.to_dict() if self.user else None,
             'event': self.event.to_dict() if self.event else None,
             'booking_date': self.booking_date.isoformat(),
-            'status': self.status.value,
+            'status': BookingStatus(self.status).name,
             'notes': self.notes,
             'payment_status': self.payment_status,
             'created_at': self.created_at.isoformat()

@@ -14,14 +14,13 @@ class User(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     phone = db.Column(db.String(20))
-    # google_id = db.Column(db.String(100), unique=True, nullable=True)
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     
     # Relationships
     bookings = db.relationship('Booking', backref='user', lazy=True, cascade='all, delete-orphan')
-    
+    facilitator = db.relationship('Facilitator', backref='facilitator_user', lazy=True)
     # Indexes for better performance
     __table_args__ = (
         db.Index('idx_user_email', 'email'),

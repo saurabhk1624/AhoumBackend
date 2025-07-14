@@ -4,9 +4,10 @@ from datetime import datetime
 import requests
 from extensions import db
 from models.booking import Booking, BookingStatus
-from models.event import Event, EventStatus
+from models.event import Event, EventStatus,EventType
 from models.user import User
 from config import Config
+
 
 bookings_bp = Blueprint('bookings', __name__)
 
@@ -22,7 +23,9 @@ def notify_crm(booking_data):
             f'{Config.CRM_SERVICE_URL}/api/notify',
             json=booking_data,
             headers=headers,
-            timeout=10
+            timeout=10,
+            verify=False
+        
         )
         
         return response.status_code == 200
@@ -33,7 +36,7 @@ def notify_crm(booking_data):
 @bookings_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_booking():
-    try:
+    # try:
         current_user_id = int(get_jwt_identity())
         data = request.get_json()
         
@@ -46,7 +49,7 @@ def create_booking():
         # Get event
         event = Event.query.get(event_id)
         if not event:
-            return jsonify({'error': 'Event not found'}), 404
+            return jsonify({'error': 'Event not found'}), 400
         
         if event.status != EventStatus.ACTIVE:
             return jsonify({'error': 'Event is not available for booking'}), 400
@@ -71,7 +74,7 @@ def create_booking():
             user_id=current_user_id,
             event_id=event_id,
             notes=notes,
-            status=BookingStatus.CONFIRMED
+            status=BookingStatus.CONFIRMED.value
         )
         
         # Update event participant count
@@ -93,7 +96,7 @@ def create_booking():
             'event': {
                 'id': event.id,
                 'title': event.title,
-                'type': event.event_type.value,
+                'type': EventType(event.event_type).name,
                 'start_datetime': event.start_datetime.isoformat(),
                 'location': event.location
             },
@@ -111,14 +114,14 @@ def create_booking():
             'crm_notified': crm_notified
         }), 201
         
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': str(e)}), 400
+    # except Exception as e:
+    #     db.session.rollback()
+    #     return jsonify({'error': str(e)}), 400
 
 @bookings_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_user_bookings():
-    try:
+    # try:
         current_user_id = int(get_jwt_identity())
         
         # Query parameters
@@ -132,7 +135,7 @@ def get_user_bookings():
         
         if status:
             try:
-                status_enum = BookingStatus(status)
+                status_enum = BookingStatus(status).name
                 query = query.filter(Booking.status == status_enum)
             except ValueError:
                 return jsonify({'error': 'Invalid status'}), 400
@@ -162,8 +165,8 @@ def get_user_bookings():
             }
         }), 200
         
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+    # except Exception as e:
+    #     return jsonify({'error': str(e)}), 400
 
 @bookings_bp.route('/<int:booking_id>', methods=['GET'])
 @jwt_required()
@@ -177,7 +180,7 @@ def get_booking(booking_id):
         ).first()
         
         if not booking:
-            return jsonify({'error': 'Booking not found'}), 404
+            return jsonify({'error': 'Booking not found'}), 400
         
         return jsonify({
             'booking': booking.to_dict()
@@ -198,7 +201,7 @@ def cancel_booking(booking_id):
         ).first()
         
         if not booking:
-            return jsonify({'error': 'Booking not found'}), 404
+            return jsonify({'error': 'Booking not found'}), 400
         
         if booking.status == BookingStatus.CANCELLED:
             return jsonify({'error': 'Booking is already cancelled'}), 400

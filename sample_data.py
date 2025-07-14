@@ -1,5 +1,7 @@
-from app import create_app, db
+from app import create_app
+from extensions import db
 from models.facilitator import Facilitator
+from models.user import User
 from models.event import Event, EventType, EventStatus
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -12,56 +14,76 @@ def seed_database():
         try:
             # Clear existing data (be careful in production!)
             print("🧹 Clearing existing data...")
-            Event.query.delete()
             Facilitator.query.delete()
+            Event.query.delete()
             db.session.commit()
             
             # Create facilitators
             print("👥 Creating facilitators...")
-            facilitators = [
-                Facilitator(
-                    email='sarah.johnson@example.com',
-                    first_name='Sarah',
-                    last_name='Johnson',
-                    phone='+1-555-0101',
-                    bio='Certified yoga instructor with 10+ years of experience in mindfulness and meditation.',
-                    specialization='Yoga & Meditation',
-                    experience_years=10
-                ),
-                Facilitator(
-                    email='mike.chen@example.com',
-                    first_name='Mike',
-                    last_name='Chen',
-                    phone='+1-555-0102',
-                    bio='Life coach specializing in personal development and stress management.',
-                    specialization='Life Coaching',
-                    experience_years=8
-                ),
-                Facilitator(
-                    email='emma.davis@example.com',
-                    first_name='Emma',
-                    last_name='Davis',
-                    phone='+1-555-0103',
-                    bio='Wellness expert focused on holistic health and nutrition.',
-                    specialization='Wellness & Nutrition',
-                    experience_years=12
-                ),
-                Facilitator(
-                    email='alex.rodriguez@example.com',
-                    first_name='Alex',
-                    last_name='Rodriguez',
-                    phone='+1-555-0104',
-                    bio='Mindfulness teacher and retreat leader with expertise in group facilitation.',
-                    specialization='Mindfulness & Retreats',
-                    experience_years=15
-                )
+            facilitator_data = [
+                {
+                    "email": "sarah.johnson@example.com",
+                    "first_name": "Sarah",
+                    "last_name": "Johnson",
+                    "password":"ahoum123",
+                    "phone": "+1-555-0101",
+                    "bio": "Certified yoga instructor with 10+ years of experience in mindfulness and meditation.",
+                    "specialization": "Yoga & Meditation",
+                    "experience_years": 10
+                },
+                {
+                    "email": "mike.chen@example.com",
+                    "first_name": "Mike",
+                    "last_name": "Chen",
+                    "phone": "+1-555-0102",
+                     "password":"ahoum123",
+                    "bio": "Life coach specializing in personal development and stress management.",
+                    "specialization": "Life Coaching",
+                    "experience_years": 8
+                },
+                {
+                    "email": "emma.davis@example.com",
+                    "first_name": "Emma",
+                    "last_name": "Davis",
+                    "phone": "+1-555-0103",
+                     "password":"ahoum123",
+                    "bio": "Wellness expert focused on holistic health and nutrition.",
+                    "specialization": "Wellness & Nutrition",
+                    "experience_years": 12
+                },
+                {
+                    "email": "alex.rodriguez@example.com",
+                    "first_name": "Alex",
+                    "last_name": "Rodriguez",
+                    "phone": "+1-555-0104",
+                     "password":"ahoum123",
+                    "bio": "Mindfulness teacher and retreat leader with expertise in group facilitation.",
+                    "specialization": "Mindfulness & Retreats",
+                    "experience_years": 15
+                }
             ]
-            
-            for facilitator in facilitators:
+
+            for data in facilitator_data:
+                user = User(
+                    email=data["email"],
+                    first_name=data["first_name"],
+                    last_name=data["last_name"],
+                    phone=data["phone"]
+                )
+                user.set_password(data['password'])
+                db.session.add(user)
+                db.session.flush()  # get user.id before commit
+
+                facilitator = Facilitator(
+                    user=user.id,
+                    bio=data["bio"],
+                    specialization=data["specialization"],
+                    experience_years=data["experience_years"]
+                )
                 db.session.add(facilitator)
-            
+
             db.session.commit()
-            print(f"✅ Created {len(facilitators)} facilitators")
+            # print(f"✅ Created {len(facilitators)} facilitators")
             
             # Create events
             print("📅 Creating events...")
@@ -72,7 +94,7 @@ def seed_database():
                 Event(
                     title='Morning Yoga Flow',
                     description='Start your day with energizing yoga poses and breathing exercises.',
-                    event_type=EventType.SESSION,
+                    event_type=EventType.SESSION.value,
                     facilitator_id=1,
                     start_datetime=now + timedelta(days=3, hours=8),
                     end_datetime=now + timedelta(days=3, hours=9, minutes=30),
@@ -84,7 +106,7 @@ def seed_database():
                 Event(
                     title='Stress Management Workshop',
                     description='Learn practical techniques to manage stress and improve work-life balance.',
-                    event_type=EventType.SESSION,
+                    event_type=EventType.SESSION.value,
                     facilitator_id=2,
                     start_datetime=now + timedelta(days=5, hours=18),
                     end_datetime=now + timedelta(days=5, hours=20),
@@ -96,7 +118,7 @@ def seed_database():
                 Event(
                     title='Nutrition Basics Seminar',
                     description='Understanding macronutrients and building healthy eating habits.',
-                    event_type=EventType.SESSION,
+                    event_type=EventType.SESSION.value,
                     facilitator_id=3,
                     start_datetime=now + timedelta(days=7, hours=14),
                     end_datetime=now + timedelta(days=7, hours=16),
@@ -108,7 +130,7 @@ def seed_database():
                 Event(
                     title='Mindfulness Meditation',
                     description='Guided meditation session for beginners and experienced practitioners.',
-                    event_type=EventType.SESSION,
+                    event_type=EventType.SESSION.value,
                     facilitator_id=4,
                     start_datetime=now + timedelta(days=2, hours=19),
                     end_datetime=now + timedelta(days=2, hours=20, minutes=30),
@@ -122,7 +144,7 @@ def seed_database():
                 Event(
                     title='Weekend Wellness Retreat',
                     description='Two-day intensive retreat focusing on yoga, meditation, and healthy living.',
-                    event_type=EventType.RETREAT,
+                    event_type=EventType.RETREAT.value,
                     facilitator_id=1,
                     start_datetime=now + timedelta(days=14, hours=9),
                     end_datetime=now + timedelta(days=16, hours=17),
@@ -134,7 +156,7 @@ def seed_database():
                 Event(
                     title='Digital Detox Retreat',
                     description='Disconnect from technology and reconnect with yourself in nature.',
-                    event_type=EventType.RETREAT,
+                    event_type=EventType.RETREAT.value,
                     facilitator_id=4,
                     start_datetime=now + timedelta(days=21, hours=10),
                     end_datetime=now + timedelta(days=23, hours=16),
@@ -146,7 +168,7 @@ def seed_database():
                 Event(
                     title='Personal Development Intensive',
                     description='Three-day program for goal setting, habit formation, and life planning.',
-                    event_type=EventType.RETREAT,
+                    event_type=EventType.RETREAT.value,
                     facilitator_id=2,
                     start_datetime=now + timedelta(days=28, hours=9),
                     end_datetime=now + timedelta(days=30, hours=18),
@@ -158,7 +180,7 @@ def seed_database():
                 Event(
                     title='Holistic Health Workshop',
                     description='Comprehensive approach to wellness including nutrition, exercise, and mental health.',
-                    event_type=EventType.SESSION,
+                    event_type=EventType.SESSION.value,
                     facilitator_id=3,
                     start_datetime=now + timedelta(days=10, hours=10),
                     end_datetime=now + timedelta(days=10, hours=15),
@@ -177,7 +199,7 @@ def seed_database():
             
             print("\n🎉 Database seeded successfully!")
             print(f"📊 Summary:")
-            print(f"   - Facilitators: {len(facilitators)}")
+            # print(f"   - Facilitators: {len(facilitators)}")
             print(f"   - Events: {len(events)}")
             
         except Exception as e:

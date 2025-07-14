@@ -5,10 +5,10 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
     # MySQL Database Configuration
-    MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'localhost'
+    MYSQL_HOST = os.environ.get('MYSQL_HOST') or 'ahoum_mysql'
     MYSQL_PORT = os.environ.get('MYSQL_PORT') or '3306'
-    MYSQL_USER = os.environ.get('MYSQL_USER') or 'booking_user'
-    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD') or 'booking_password'
+    MYSQL_USER = os.environ.get('MYSQL_USER') or 'ahoum'
+    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD') or 'ahoum123'
     MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE') or 'booking_system'
     
     # Construct MySQL URI
@@ -30,13 +30,16 @@ class Config:
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-string'
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
-    
+    JWT_TOKEN_LOCATION = ['headers']  # Look for JWT tokens in request headers
+    JWT_HEADER_NAME = 'Authorization'  # Header name to look for JWT
+    JWT_HEADER_TYPE = 'Bearer'  # Expected header format: "Bearer <token>"
+    JWT_ALGORITHM = 'HS256'
     # Google OAuth Configuration
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
     GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
     
     # CRM Service Configuration
-    CRM_SERVICE_URL = os.environ.get('CRM_SERVICE_URL') or 'http://localhost:4001'
+    CRM_SERVICE_URL = os.environ.get('CRM_SERVICE_URL') or 'http://localhost:8003'
     CRM_BEARER_TOKEN = os.environ.get('CRM_BEARER_TOKEN') or 'crm-static-bearer-token-123'
 
 class DevelopmentConfig(Config):

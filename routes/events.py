@@ -76,7 +76,7 @@ def get_event(event_id):
         event = Event.query.get(event_id)
         
         if not event:
-            return jsonify({'error': 'Event not found'}), 404
+            return jsonify({'error': 'Event not found'}), 400
         
         return jsonify({
             'event': event.to_dict()
@@ -90,7 +90,10 @@ def get_event(event_id):
 def get_event_types():
     try:
         return jsonify({
-            'event_types': [event_type.value for event_type in EventType]
+            'event_types': [
+                {'key': event_type.name, 'value': event_type.value}
+                for event_type in EventType
+            ]
         }), 200
         
     except Exception as e:
