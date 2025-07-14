@@ -1,0 +1,57 @@
+erDiagram
+    USERS {
+        int id PK
+        string email UK
+        string password_hash
+        string first_name
+        string last_name
+        string phone
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }
+    
+    FACILITATORS {
+        int id PK
+        int user FK
+        text bio
+        string specialization
+        int experience_years
+    }
+    
+    EVENTS {
+        int id PK
+        string title
+        text description
+        int event_type
+        int facilitator_id FK
+        datetime start_datetime
+        datetime end_datetime
+        string location
+        string virtual_link
+        int max_participants
+        int current_participants
+        decimal price
+        int status
+        text requirements
+        datetime created_at
+        datetime updated_at
+    }
+    
+    BOOKINGS {
+        int id PK
+        int user_id FK
+        int event_id FK
+        datetime booking_date
+        int status
+        text notes
+        string payment_status
+        string payment_id
+        datetime created_at
+        datetime updated_at
+    }
+    
+    USERS ||--o| FACILITATORS : "can be"
+    USERS ||--o{ BOOKINGS : "makes"
+    FACILITATORS ||--o{ EVENTS : "creates"
+    EVENTS ||--o{ BOOKINGS : "receives"

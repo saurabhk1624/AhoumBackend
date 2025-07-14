@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant U as User/Facilitator
+    participant API as Main API
+    participant CRM as CRM Service
+    participant DB as Database
+    
+    U->>API: POST /api/auth/login
+    API->>DB: Validate credentials
+    DB-->>API: User data
+    API-->>U: JWT Access Token + Refresh Token
+    
+    U->>API: API Request + Bearer Token
+    API->>API: Validate JWT
+    API->>DB: Execute operation
+    DB-->>API: Response data
+    API-->>U: Secure response
+    
+    API->>CRM: POST /api/notify + Bearer Token
+    CRM->>CRM: Validate static bearer token
+    CRM-->>API: Acknowledgment
