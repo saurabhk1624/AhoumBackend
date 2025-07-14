@@ -30,6 +30,10 @@ class Config:
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-string'
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+    JWT_TOKEN_LOCATION = ['headers']  # Look for JWT tokens in request headers
+    JWT_HEADER_NAME = 'Authorization'  # Header name to look for JWT
+    JWT_HEADER_TYPE = 'Bearer'  # Expected header format: "Bearer <token>"
+    JWT_ALGORITHM = 'HS256'  # Algorithm used to sign JWT
     
     # Google OAuth Configuration
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
