@@ -121,6 +121,16 @@ def get_user_bookings():
     try:
         current_user_id = int(get_jwt_identity())
         
+        # Check database connection first
+        try:
+            db.session.execute('SELECT 1')
+        except Exception as db_error:
+            return jsonify({
+                'error': 'Database connection error',
+                'message': 'Unable to connect to database. Please ensure the application is properly initialized.',
+                'details': str(db_error)
+            }), 500
+        
         # Query parameters
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)

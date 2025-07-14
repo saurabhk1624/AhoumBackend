@@ -48,10 +48,10 @@ if __name__ == '__main__':
     with app.app_context():
         try:
             # Create tables if they don't exist
-            print(db.metadata.tables.keys())
+            print("Available tables:", list(db.metadata.tables.keys()))
             db.create_all()
             print("Database tables created successfully!")
         except Exception as e:
             print(f"Error creating database tables: {e}")
     
-    app.run(host="0.0.0.0",debug=True, port=8000)
+    app.run(host="0.0.0.0", debug=True, port=8000)
