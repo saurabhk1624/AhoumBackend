@@ -14,6 +14,6 @@ RUN adduser --disabled-password ahoum && \
     chown -R ahoum:ahoum /ahoum && \
     chown -R 755 /ahoum
 
-EXPOSE 8000
+EXPOSE 8000 4001
 
 USER ahoum

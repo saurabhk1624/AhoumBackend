@@ -179,4 +179,4 @@ def health_check():
 if __name__ == '__main__':
     print("Starting CRM Notification Service...")
     print(f"Bearer Token: {BEARER_TOKEN}")
-    app.run(debug=True, port=4001)
+    app.run(host="0.0.0.0", debug=True, port=4001)
