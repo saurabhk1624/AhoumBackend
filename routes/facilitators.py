@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from app import db
+from extensions import db
 from models.facilitator import Facilitator
 from models.event import Event
 from models.booking import Booking
@@ -35,7 +35,7 @@ def get_facilitators():
         }), 200
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400
 
 @facilitators_bp.route('/<int:facilitator_id>', methods=['GET'])
 @jwt_required()
@@ -51,7 +51,7 @@ def get_facilitator(facilitator_id):
         }), 200
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400
 
 @facilitators_bp.route('/<int:facilitator_id>/events', methods=['GET'])
 @jwt_required()
@@ -69,4 +69,4 @@ def get_facilitator_events(facilitator_id):
         }), 200
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400

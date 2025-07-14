@@ -10,10 +10,10 @@ def create_database():
     """Create MySQL database and user if they don't exist"""
     
     # MySQL connection parameters
-    mysql_host = os.environ.get('MYSQL_HOST', 'localhost')
+    mysql_host = os.environ.get('MYSQL_HOST', 'ahoum_mysql')
     mysql_port = int(os.environ.get('MYSQL_PORT', '3306'))
     mysql_root_user = os.environ.get('MYSQL_ROOT_USER', 'root')
-    mysql_root_password = os.environ.get('MYSQL_ROOT_PASSWORD', '')
+    mysql_root_password = os.environ.get('MYSQL_ROOT_PASSWORD', 'ahoum123')
     
     # Database and user to create
     database_name = os.environ.get('MYSQL_DATABASE', 'booking_system')

@@ -1,12 +1,12 @@
-from app import db
+from extensions import db
 from datetime import datetime
 import enum
 
-class BookingStatus(enum.Enum):
-    PENDING = "pending"
-    CONFIRMED = "confirmed"
-    CANCELLED = "cancelled"
-    COMPLETED = "completed"
+class BookingStatus(enum.IntEnum):
+    PENDING = 1
+    CONFIRMED = 2
+    CANCELLED = 3
+    COMPLETED = 4
 
 class Booking(db.Model):
     __tablename__ = 'bookings'

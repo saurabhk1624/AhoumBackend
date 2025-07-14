@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
 import requests
-from app import db
+from extensions import db
 from models.booking import Booking, BookingStatus
 from models.event import Event, EventStatus
 from models.user import User
@@ -34,7 +34,7 @@ def notify_crm(booking_data):
 @jwt_required()
 def create_booking():
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         data = request.get_json()
         
         event_id = data.get('event_id')
@@ -113,13 +113,13 @@ def create_booking():
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400
 
 @bookings_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_user_bookings():
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         
         # Query parameters
         page = request.args.get('page', 1, type=int)
@@ -163,13 +163,13 @@ def get_user_bookings():
         }), 200
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400
 
 @bookings_bp.route('/<int:booking_id>', methods=['GET'])
 @jwt_required()
 def get_booking(booking_id):
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         
         booking = Booking.query.filter_by(
             id=booking_id,
@@ -184,13 +184,13 @@ def get_booking(booking_id):
         }), 200
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400
 
 @bookings_bp.route('/<int:booking_id>/cancel', methods=['PUT'])
 @jwt_required()
 def cancel_booking(booking_id):
     try:
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         
         booking = Booking.query.filter_by(
             id=booking_id,
@@ -221,4 +221,4 @@ def cancel_booking(booking_id):
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400

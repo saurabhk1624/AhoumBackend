@@ -1,19 +1,12 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager
+from flasgger import Swagger
 from flask_cors import CORS
 from config import config
 import os
-
-# Initialize extensions
-db = SQLAlchemy()
-migrate = Migrate()
-jwt = JWTManager()
+from extensions import db ,migrate,jwt
 
 def create_app(config_name=None):
     app = Flask(__name__)
-    
     # Get config name from environment or use default
     config_name = config_name or os.environ.get('FLASK_ENV', 'default')
     app.config.from_object(config[config_name])
@@ -23,7 +16,7 @@ def create_app(config_name=None):
     migrate.init_app(app, db)
     jwt.init_app(app)
     CORS(app)
-    
+    Swagger(app)
     # Register blueprints
     from routes.auth import auth_bp
     from routes.events import events_bp
@@ -46,7 +39,7 @@ def create_app(config_name=None):
             db.session.execute('SELECT 1')
             return {'status': 'healthy', 'database': 'connected'}, 200
         except Exception as e:
-            return {'status': 'unhealthy', 'database': 'disconnected', 'error': str(e)}, 500
+            return {'status': 'unhealthy', 'database': 'disconnected', 'error': str(e)}, 400
     
     return app
 
@@ -55,9 +48,10 @@ if __name__ == '__main__':
     with app.app_context():
         try:
             # Create tables if they don't exist
+            print(db.metadata.tables.keys())
             db.create_all()
             print("Database tables created successfully!")
         except Exception as e:
             print(f"Error creating database tables: {e}")
     
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0",debug=True, port=8000)

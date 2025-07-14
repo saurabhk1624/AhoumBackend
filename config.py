@@ -36,7 +36,7 @@ class Config:
     GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
     
     # CRM Service Configuration
-    CRM_SERVICE_URL = os.environ.get('CRM_SERVICE_URL') or 'http://localhost:5001'
+    CRM_SERVICE_URL = os.environ.get('CRM_SERVICE_URL') or 'http://localhost:4001'
     CRM_BEARER_TOKEN = os.environ.get('CRM_BEARER_TOKEN') or 'crm-static-bearer-token-123'
 
 class DevelopmentConfig(Config):

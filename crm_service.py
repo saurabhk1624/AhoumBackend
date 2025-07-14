@@ -103,7 +103,7 @@ def receive_booking_notification():
         return jsonify({
             'error': 'Internal server error',
             'message': str(e)
-        }), 500
+        }), 400
 
 @app.route('/api/bookings', methods=['GET'])
 def get_bookings():
@@ -136,7 +136,7 @@ def get_bookings():
         return jsonify({
             'error': 'Internal server error',
             'message': str(e)
-        }), 500
+        }), 400
 
 @app.route('/api/bookings/<int:booking_id>', methods=['GET'])
 def get_booking(booking_id):
@@ -165,7 +165,7 @@ def get_booking(booking_id):
         return jsonify({
             'error': 'Internal server error',
             'message': str(e)
-        }), 500
+        }), 400
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -179,4 +179,4 @@ def health_check():
 if __name__ == '__main__':
     print("Starting CRM Notification Service...")
     print(f"Bearer Token: {BEARER_TOKEN}")
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=4001)

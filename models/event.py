@@ -1,31 +1,31 @@
-from app import db
+from extensions import db
 from datetime import datetime
 import enum
+from sqlalchemy import Numeric
+class EventType(enum.IntEnum):
+    SESSION = 1
+    RETREAT = 2
 
-class EventType(enum.Enum):
-    SESSION = "session"
-    RETREAT = "retreat"
-
-class EventStatus(enum.Enum):
-    ACTIVE = "active"
-    CANCELLED = "cancelled"
-    COMPLETED = "completed"
+class EventStatus(enum.IntEnum):
+    ACTIVE = 1
+    CANCELLED = 2
+    COMPLETED = 3
 
 class Event(db.Model):
     __tablename__ = 'events'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
+    description = db.Column(db.Text,)
     event_type = db.Column(db.Enum(EventType), nullable=False)
     facilitator_id = db.Column(db.Integer, db.ForeignKey('facilitators.id'), nullable=False)
     start_datetime = db.Column(db.DateTime, nullable=False)
     end_datetime = db.Column(db.DateTime, nullable=False)
     location = db.Column(db.String(200))
-    virtual_link = db.Column(db.String(500))
+    virtual_link = db.Column(db.String(400))
     max_participants = db.Column(db.Integer, default=10)
     current_participants = db.Column(db.Integer, default=0)
-    price = db.Column(db.Decimal(10, 2), nullable=False)
+    price = db.Column(Numeric(10, 2), nullable=False)
     status = db.Column(db.Enum(EventStatus), default=EventStatus.ACTIVE)
     requirements = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -40,7 +40,6 @@ class Event(db.Model):
         db.Index('idx_event_start_datetime', 'start_datetime'),
         db.Index('idx_event_type', 'event_type'),
         db.Index('idx_event_status', 'status'),
-        db.Index('idx_event_search', 'title', 'description'),
     )
     
     @property

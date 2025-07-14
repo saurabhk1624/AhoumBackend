@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import and_, or_
 from datetime import datetime
-from app import db
+from extensions import db
 from models.event import Event, EventType, EventStatus
 from models.facilitator import Facilitator
 
@@ -67,7 +67,7 @@ def get_events():
         }), 200
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400
 
 @events_bp.route('/<int:event_id>', methods=['GET'])
 @jwt_required()
@@ -83,7 +83,7 @@ def get_event(event_id):
         }), 200
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400
 
 @events_bp.route('/types', methods=['GET'])
 @jwt_required()
@@ -94,4 +94,4 @@ def get_event_types():
         }), 200
         
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400
